@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import styles from './App.module.scss';
 
 function App() {
+  const [videoSrc, setVideoSrc] = useState<string | undefined>();
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files: FileList = e.target.files!;
+
+    for (const [key, value] of Object.entries(files)) {
+      console.log(`${key}: ${value.type}`);
+    }
+
+    const fileURL = URL.createObjectURL(files[0]);
+
+    setVideoSrc((_) => fileURL);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.PlayerContainer}>
+      <div className={styles.InputContainer}>
+        <input type="file" accept="video/*" multiple onChange={onInputChange} />
+      </div>
+      <div className={styles.VideosList}>
+        <h2>Play List</h2>
+      </div>
+      <div className={styles.VideoFrame}>
+        <video controls autoPlay src={videoSrc}></video>
+      </div>
     </div>
   );
 }

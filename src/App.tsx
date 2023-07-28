@@ -1,3 +1,5 @@
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
 import PlayArrow from '@mui/icons-material/PlayArrow';
 import {
@@ -5,6 +7,7 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   Drawer,
   IconButton,
   List,
@@ -25,8 +28,9 @@ function App() {
     useState<number>(-1);
 
   const play = (index: number): void => {
-    setVideoSrc(videosList[index].url);
-    setCurrentPlayedVideoIndex(index);
+    const nextVideoIndex = index >= videosList.length || index < 0 ? 0 : index;
+    setVideoSrc(videosList[nextVideoIndex].url);
+    setCurrentPlayedVideoIndex(nextVideoIndex);
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -48,17 +52,6 @@ function App() {
     setVideosList(videoList);
     setVideoSrc(videoList[0].url);
     setCurrentPlayedVideoIndex(0);
-  };
-
-  const onVideoEnded = (): void => {
-    console.log(`Nam data is: video ended`);
-    const nextVideoIndex =
-      currentPlayedVideoIndex === videosList.length - 1
-        ? 0
-        : currentPlayedVideoIndex + 1;
-    console.log(`Nam data is: nextVideoIndex`, nextVideoIndex);
-    setCurrentPlayedVideoIndex(nextVideoIndex);
-    setVideoSrc(videosList[nextVideoIndex].url);
   };
 
   return (
@@ -108,18 +101,42 @@ function App() {
       <Grid container spacing={2} padding={4}>
         <Grid xs={12} alignItems={'center'}>
           {videosList.length ? (
-            <>
+            <Container>
               <video
                 style={{ width: '100%', height: '70vh' }}
                 controls
                 autoPlay
                 src={videoSrc}
-                onEnded={() => onVideoEnded()}
+                onEnded={() => play(currentPlayedVideoIndex + 1)}
               ></video>
               <Typography variant="subtitle1">
                 Currently playing: {videosList[currentPlayedVideoIndex].name}
               </Typography>
-            </>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: 'fit-content',
+                  gap: '1rem'
+                }}
+              >
+                <Button
+                  onClick={() => play(currentPlayedVideoIndex - 1)}
+                  variant="contained"
+                  startIcon={<ChevronLeft />}
+                >
+                  Prev
+                </Button>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <Button
+                  onClick={() => play(currentPlayedVideoIndex + 1)}
+                  variant="contained"
+                  endIcon={<ChevronRight />}
+                >
+                  Next
+                </Button>
+              </Box>
+            </Container>
           ) : (
             <Typography variant="body1">Select videos to start</Typography>
           )}

@@ -19,7 +19,7 @@ import {
   Typography
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styles from './App.module.scss';
 import playingVideoGif from './playing-video.gif';
 
@@ -31,6 +31,7 @@ function App() {
   const [videosList, setVideosList] = useState<Video[]>([]);
   const [currentPlayedVideoIndex, setCurrentPlayedVideoIndex] =
     useState<number>(-1);
+  const videoElementRef = useRef<HTMLVideoElement>(null);
 
   const play = (index: number): void => {
     const nextVideoIndex = index >= videosList.length || index < 0 ? 0 : index;
@@ -121,11 +122,21 @@ function App() {
           {videosList.length ? (
             <Container>
               <video
+                ref={videoElementRef}
                 style={{ width: '100%', height: '70vh' }}
                 controls
                 autoPlay
                 src={videoSrc}
                 onEnded={() => play(currentPlayedVideoIndex + 1)}
+                onTimeUpdate={() => {
+                  // fix for video with malformed meta data that will not end
+                  if (
+                    videoElementRef.current?.duration ===
+                    videoElementRef.current?.currentTime
+                  ) {
+                    play(currentPlayedVideoIndex + 1);
+                  }
+                }}
               ></video>
               <Typography variant="subtitle1">
                 Currently playing: {videosList[currentPlayedVideoIndex].name}

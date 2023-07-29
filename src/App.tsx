@@ -12,11 +12,16 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Toolbar,
   Typography
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import React, { useState } from 'react';
+import styles from './App.module.scss';
+import playingVideoGif from './playing-video.gif';
 
 type Video = { name: string; url: string };
 
@@ -69,15 +74,28 @@ function App() {
           />
           <List>
             {videosList.map((video, index) => (
-              <ListItem key={video.url}>
-                <Button
+              <ListItem className={styles['video-item']} key={video.url}>
+                <ListItemButton
                   onClick={() => {
                     play(index);
                   }}
-                  endIcon={<PlayArrow />}
                 >
-                  {video.name}
-                </Button>
+                  {currentPlayedVideoIndex === index && (
+                    <img
+                      style={{
+                        width: '1.5rem',
+                        height: '1.5rem',
+                        marginRight: '1rem'
+                      }}
+                      src={playingVideoGif}
+                      alt="...loading"
+                    />
+                  )}
+                  <ListItemText primary={video.name} />
+                  <ListItemIcon className={styles['play-icon']}>
+                    <PlayArrow />
+                  </ListItemIcon>
+                </ListItemButton>
               </ListItem>
             ))}
           </List>

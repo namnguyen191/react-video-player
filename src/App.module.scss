@@ -1,0 +1,11 @@
+.video-item {
+  .play-icon {
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+  }
+  &:hover {
+    .play-icon {
+      opacity: 1;
+    }
+  }
+}
